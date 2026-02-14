@@ -7,30 +7,108 @@
   },
   "images": [
     {
-      "date": "current",
-      "filename": "esri_world_z18.png",
-      "source": "esri_world",
-      "zoom": 18,
-      "aligned_filename": "aligned_esri_world_z18.png",
-      "width": 256,
-      "height": 256
+      "date": "2013-11-07",
+      "filename": "landsat8_2013.png",
+      "aligned_filename": "landsat8_2013.png",
+      "source": "Landsat 8",
+      "width": 1024,
+      "height": 1024
     },
     {
-      "date": "current",
-      "filename": "google_satellite_z18.png",
-      "source": "google_satellite",
-      "zoom": 18,
-      "aligned_filename": "aligned_google_satellite_z18.png",
-      "width": 256,
-      "height": 256
+      "date": "2014-07-28",
+      "filename": "landsat8_2014.png",
+      "aligned_filename": "landsat8_2014.png",
+      "source": "Landsat 8",
+      "width": 1024,
+      "height": 1024
+    },
+    {
+      "date": "2015-07-15",
+      "filename": "landsat8_2015.png",
+      "aligned_filename": "landsat8_2015.png",
+      "source": "Landsat 8",
+      "width": 1024,
+      "height": 1024
+    },
+    {
+      "date": "2016-12-01",
+      "filename": "landsat8_2016.png",
+      "aligned_filename": "landsat8_2016.png",
+      "source": "Landsat 8",
+      "width": 1024,
+      "height": 1024
+    },
+    {
+      "date": "2017-09-06",
+      "filename": "landsat8_2017.png",
+      "aligned_filename": "landsat8_2017.png",
+      "source": "Landsat 8",
+      "width": 1024,
+      "height": 1024
+    },
+    {
+      "date": "2018-05-13",
+      "filename": "landsat8_2018.png",
+      "aligned_filename": "landsat8_2018.png",
+      "source": "Landsat 8",
+      "width": 1024,
+      "height": 1024
+    },
+    {
+      "date": "2019-06-17",
+      "filename": "landsat8_2019.png",
+      "aligned_filename": "landsat8_2019.png",
+      "source": "Landsat 8",
+      "width": 1024,
+      "height": 1024
+    },
+    {
+      "date": "2020-03-15",
+      "filename": "landsat8_2020.png",
+      "aligned_filename": "landsat8_2020.png",
+      "source": "Landsat 8",
+      "width": 1024,
+      "height": 1024
+    },
+    {
+      "date": "2021-09-01",
+      "filename": "landsat8_2021.png",
+      "aligned_filename": "landsat8_2021.png",
+      "source": "Landsat 8",
+      "width": 1024,
+      "height": 1024
+    },
+    {
+      "date": "2022-09-17",
+      "filename": "sentinel2_2022.png",
+      "aligned_filename": "sentinel2_2022.png",
+      "source": "Sentinel-2",
+      "width": 1024,
+      "height": 1024
+    },
+    {
+      "date": "2023-01-15",
+      "filename": "sentinel2_2023.png",
+      "aligned_filename": "sentinel2_2023.png",
+      "source": "Sentinel-2",
+      "width": 1024,
+      "height": 1024
+    },
+    {
+      "date": "2024-11-10",
+      "filename": "sentinel2_2024.png",
+      "aligned_filename": "sentinel2_2024.png",
+      "source": "Sentinel-2",
+      "width": 1024,
+      "height": 1024
     }
   ],
   "metadata": {
-    "generated": "2026-02-14T23:34:15.171808",
-    "total_images": 2,
+    "generated": "2026-02-15T02:05:27.213226",
+    "total_images": 12,
     "date_range": {
-      "start": "current",
-      "end": "current"
+      "start": "2013-11-07",
+      "end": "2024-11-10"
     }
   }
 }

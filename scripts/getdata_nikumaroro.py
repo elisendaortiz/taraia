@@ -26,6 +26,10 @@ from datetime import datetime
 from pathlib import Path
 from PIL import Image
 import io
+from dotenv import load_dotenv
+
+# Load .env from the project root (one level up from scripts/)
+load_dotenv(Path(__file__).parent.parent / ".env")
 
 # ============================================================================
 # CONFIGURATION
@@ -33,8 +37,8 @@ import io
 
 TARAIA_LAT  = -4.686167    # 4°41'10.2"S
 TARAIA_LON  = -174.498083  # 174°29'53.1"W
-BUFFER_M    = 300          # 500 m radius → ~1 km² ROI
-IMAGE_PX    = 512          # Output image size in pixels
+BUFFER_M    = 1500         # 1500 m radius → ~3×3 km ROI (~100×100 px at Landsat 30m native)
+IMAGE_PX    = 1024         # Output image size in pixels
 
 START_YEAR  = 2013
 END_YEAR    = 2024
@@ -47,14 +51,17 @@ OUTPUT_DIR.mkdir(exist_ok=True)
 # ============================================================================
 
 def initialize_ee():
+    project = os.environ.get("GOOGLE_PROJECT_ID")
+    if not project:
+        raise RuntimeError("GOOGLE_PROJECT_ID not set — add it to your .env file.")
     try:
-        ee.Initialize()
-        print("✓ Earth Engine initialized")
-    except Exception:
+        ee.Initialize(project=project)
+        print(f"✓ Earth Engine initialized (project: {project})")
+    except ee.EEException:
         print("  Authenticating Earth Engine...")
         ee.Authenticate()
-        ee.Initialize()
-        print("✓ Earth Engine authenticated and initialized")
+        ee.Initialize(project=project)
+        print(f"✓ Earth Engine authenticated and initialized (project: {project})")
 
 
 def get_roi():
