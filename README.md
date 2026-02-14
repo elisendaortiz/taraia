@@ -2,7 +2,7 @@
 
 Satellite imagery analysis of the **Taraia Object**, a submerged feature in the northwest lagoon of Nikumaroro Island (Republic of Kiribati) at coordinates **4°41'10.2"S, 174°29'53.1"W** — suspected location of Amelia Earhart's Lockheed Electra 10E.
 
-The project tracks changes in the object's visibility between 2013 and 2024 using multi-source satellite imagery, with evidence suggesting progressive sediment obscuration over time.
+The project tracks changes in the object's visibility between 2013 and 2024 using multi-source satellite imagery, attemting to corroborate suggested progressive sediment obscuration over time.
 
 ---
 
