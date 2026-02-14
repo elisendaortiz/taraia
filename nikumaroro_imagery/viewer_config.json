@@ -1,0 +1,36 @@
+{
+  "location": {
+    "name": "Taraia Object, Nikumaroro Island",
+    "lat": -4.686167,
+    "lon": -174.498083,
+    "description": "Suspected location of Amelia Earhart's Lockheed Electra 10E"
+  },
+  "images": [
+    {
+      "date": "current",
+      "filename": "esri_world_z18.png",
+      "source": "esri_world",
+      "zoom": 18,
+      "aligned_filename": "aligned_esri_world_z18.png",
+      "width": 256,
+      "height": 256
+    },
+    {
+      "date": "current",
+      "filename": "google_satellite_z18.png",
+      "source": "google_satellite",
+      "zoom": 18,
+      "aligned_filename": "aligned_google_satellite_z18.png",
+      "width": 256,
+      "height": 256
+    }
+  ],
+  "metadata": {
+    "generated": "2026-02-14T23:34:15.171808",
+    "total_images": 2,
+    "date_range": {
+      "start": "current",
+      "end": "current"
+    }
+  }
+}

@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Taraia Object Time-Series Viewer</title>
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+
+        // Lucide icons as inline SVG
+        const MapPin = ({ size = 24, className = "" }) => (
+            <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                <circle cx="12" cy="10" r="3"></circle>
+            </svg>
+        );
+
+        const Calendar = ({ size = 24 }) => (
+            <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                <line x1="16" y1="2" x2="16" y2="6"></line>
+                <line x1="8" y1="2" x2="8" y2="6"></line>
+                <line x1="3" y1="10" x2="21" y2="10"></line>
+            </svg>
+        );
+
+        const Info = ({ size = 24, className = "" }) => (
+            <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="12" y1="16" x2="12" y2="12"></line>
+                <line x1="12" y1="8" x2="12.01" y2="8"></line>
+            </svg>
+        );
+
+        const ChevronLeft = ({ size = 24 }) => (
+            <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <polyline points="15 18 9 12 15 6"></polyline>
+            </svg>
+        );
+
+        const ChevronRight = ({ size = 24 }) => (
+            <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <polyline points="9 18 15 12 9 6"></polyline>
+            </svg>
+        );
+
+        const TaraiaViewer = () => {
+            const [currentIndex, setCurrentIndex] = useState(0);
+            const [showInfo, setShowInfo] = useState(true);
+            const [config, setConfig] = useState(null);
+            const [loading, setLoading] = useState(true);
+            const [error, setError] = useState(null);
+
+            useEffect(() => {
+                // Load config from nikumaroro_imagery/viewer_config.json
+                fetch('./nikumaroro_imagery/viewer_config.json')
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Failed to load viewer_config.json. Make sure Python script has been run first.');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        setConfig(data);
+                        setLoading(false);
+                    })
+                    .catch(err => {
+                        setError(err.message);
+                        setLoading(false);
+                    });
+            }, []);
+
+            if (loading) {
+                return (
+                    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white flex items-center justify-center">
+                        <div className="text-center">
+                            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto mb-4"></div>
+                            <p className="text-slate-300">Loading imagery data...</p>
+                        </div>
+                    </div>
+                );
+            }
+
+            if (error) {
+                return (
+                    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white flex items-center justify-center p-6">
+                        <div className="max-w-2xl bg-red-900/30 border border-red-500/50 rounded-lg p-6">
+                            <h2 className="text-xl font-bold text-red-400 mb-3">⚠️ Configuration Error</h2>
+                            <p className="text-slate-300 mb-4">{error}</p>
+                            <div className="bg-slate-900/50 p-4 rounded text-sm text-slate-400">
+                                <p className="font-semibold mb-2">To fix this:</p>
+                                <ol className="list-decimal ml-4 space-y-1">
+                                    <li>Run the Python script: <code className="bg-slate-800 px-1 rounded">python nikumaroro_analysis.py</code></li>
+                                    <li>This will create <code className="bg-slate-800 px-1 rounded">nikumaroro_imagery/viewer_config.json</code></li>
+                                    <li>Open <code className="bg-slate-800 px-1 rounded">viewer.html</code> in your browser</li>
+                                </ol>
+                            </div>
+                        </div>
+                    </div>
+                );
+            }
+
+            const currentImage = config.images[currentIndex];
+            const imagePath = `./nikumaroro_imagery/${currentImage.aligned_filename || currentImage.filename}`;
+
+            const handlePrevious = () => {
+                setCurrentIndex((prev) => (prev > 0 ? prev - 1 : config.images.length - 1));
+            };
+
+            const handleNext = () => {
+                setCurrentIndex((prev) => (prev < config.images.length - 1 ? prev + 1 : 0));
+            };
+
+            const handleSliderChange = (e) => {
+                setCurrentIndex(parseInt(e.target.value));
+            };
+
+            return (
+                <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white p-6">
+                    <div className="max-w-6xl mx-auto">
+                        {/* Header */}
+                        <div className="mb-6">
+                            <h1 className="text-3xl font-bold mb-2 flex items-center gap-3">
+                                <MapPin size={32} className="text-red-500" />
+                                {config.location.name}
+                            </h1>
+                            <p className="text-slate-300 text-sm flex items-center gap-2">
+                                <span className="font-mono bg-slate-800 px-2 py-1 rounded">
+                                    {Math.abs(config.location.lat).toFixed(6)}°{config.location.lat < 0 ? 'S' : 'N'}
+                                </span>
+                                <span className="font-mono bg-slate-800 px-2 py-1 rounded">
+                                    {Math.abs(config.location.lon).toFixed(6)}°{config.location.lon < 0 ? 'W' : 'E'}
+                                </span>
+                            </p>
+                        </div>
+
+                        {/* Info Panel */}
+                        {showInfo && (
+                            <div className="bg-blue-900/30 border border-blue-500/50 rounded-lg p-4 mb-6 relative">
+                                <button
+                                    onClick={() => setShowInfo(false)}
+                                    className="absolute top-2 right-2 text-slate-400 hover:text-white text-2xl leading-none"
+                                >
+                                    ×
+                                </button>
+                                <div className="flex items-start gap-3">
+                                    <Info size={20} className="text-blue-400 mt-1 flex-shrink-0" />
+                                    <div>
+                                        <h3 className="font-semibold text-blue-300 mb-1">About This Location</h3>
+                                        <p className="text-sm text-slate-300 mb-2">{config.location.description}</p>
+                                        <p className="text-xs text-slate-400">
+                                            {config.images.length < 5 ? (
+                                                <>
+                                                    Currently showing {config.images.length} image(s). 
+                                                    For full time-series analysis, authenticate Google Earth Engine and re-run the Python script.
+                                                </>
+                                            ) : (
+                                                <>
+                                                    Viewing {config.images.length} images from {config.metadata.date_range.start} to {config.metadata.date_range.end}.
+                                                    Use the slider to observe sedimentation changes over time.
+                                                </>
+                                            )}
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+
+                        {/* Main Viewer */}
+                        <div className="bg-slate-800/50 rounded-xl overflow-hidden border border-slate-700 shadow-2xl">
+                            {/* Image Display */}
+                            <div className="relative bg-black aspect-square flex items-center justify-center">
+                                <img 
+                                    src={imagePath} 
+                                    alt={`Satellite imagery from ${currentImage.date}`}
+                                    className="max-w-full max-h-full object-contain"
+                                    onError={(e) => {
+                                        e.target.style.display = 'none';
+                                        e.target.nextSibling.style.display = 'flex';
+                                    }}
+                                />
+                                <div className="absolute inset-0 items-center justify-center hidden" style={{display: 'none'}}>
+                                    <div className="text-center text-slate-500 p-8">
+                                        <MapPin size={48} className="mx-auto mb-2" />
+                                        <p className="text-sm mb-2">Image not found</p>
+                                        <p className="text-xs">{imagePath}</p>
+                                    </div>
+                                </div>
+
+                                {/* Image Metadata Overlay */}
+                                <div className="absolute top-4 left-4 bg-black/70 px-3 py-2 rounded-lg">
+                                    <div className="text-xs text-slate-300">
+                                        <div className="flex items-center gap-2 mb-1">
+                                            <Calendar size={14} />
+                                            <span className="font-semibold">{currentImage.date}</span>
+                                        </div>
+                                        <div className="text-slate-400">
+                                            Source: {currentImage.source}
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* Image Counter */}
+                                <div className="absolute top-4 right-4 bg-black/70 px-3 py-2 rounded-lg">
+                                    <div className="text-sm font-mono">
+                                        {currentIndex + 1} / {config.images.length}
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Controls */}
+                            <div className="bg-slate-800 p-6">
+                                {/* Timeline Slider */}
+                                <div className="mb-4">
+                                    <div className="flex items-center gap-4">
+                                        <button
+                                            onClick={handlePrevious}
+                                            className="bg-slate-700 hover:bg-slate-600 p-2 rounded-lg transition-colors"
+                                            title="Previous image"
+                                        >
+                                            <ChevronLeft size={20} />
+                                        </button>
+
+                                        <div className="flex-1">
+                                            <input
+                                                type="range"
+                                                min="0"
+                                                max={config.images.length - 1}
+                                                value={currentIndex}
+                                                onChange={handleSliderChange}
+                                                className="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer slider"
+                                                style={{
+                                                    background: `linear-gradient(to right, #3b82f6 0%, #3b82f6 ${(currentIndex / (config.images.length - 1)) * 100}%, #475569 ${(currentIndex / (config.images.length - 1)) * 100}%, #475569 100%)`
+                                                }}
+                                            />
+                                            <div className="flex justify-between mt-2 text-xs text-slate-400">
+                                                <span>{config.metadata.date_range.start}</span>
+                                                <span>{config.metadata.date_range.end}</span>
+                                            </div>
+                                        </div>
+
+                                        <button
+                                            onClick={handleNext}
+                                            className="bg-slate-700 hover:bg-slate-600 p-2 rounded-lg transition-colors"
+                                            title="Next image"
+                                        >
+                                            <ChevronRight size={20} />
+                                        </button>
+                                    </div>
+                                </div>
+
+                                {/* Image Info */}
+                                <div className="grid grid-cols-2 gap-4 text-sm">
+                                    <div className="bg-slate-900/50 p-3 rounded-lg">
+                                        <div className="text-slate-400 text-xs mb-1">Resolution</div>
+                                        <div className="font-mono">{currentImage.width} × {currentImage.height}px</div>
+                                    </div>
+                                    <div className="bg-slate-900/50 p-3 rounded-lg">
+                                        <div className="text-slate-400 text-xs mb-1">Zoom Level</div>
+                                        <div className="font-mono">Z{currentImage.zoom || 'N/A'}</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Instructions */}
+                        {config.images.length < 5 && (
+                            <div className="mt-6 bg-slate-800/30 border border-slate-700 rounded-lg p-4">
+                                <h3 className="font-semibold mb-2 text-sm">📝 To Enable Full Time-Series Viewing:</h3>
+                                <ol className="text-sm text-slate-300 space-y-1 ml-4 list-decimal">
+                                    <li>Authenticate Google Earth Engine: <code className="bg-slate-900 px-1 rounded text-xs">earthengine authenticate</code></li>
+                                    <li>Re-run: <code className="bg-slate-900 px-1 rounded text-xs">python nikumaroro_analysis.py</code></li>
+                                    <li>Refresh this page to see historical imagery (2015-2024)</li>
+                                </ol>
+                                <div className="mt-3 text-xs text-slate-400">
+                                    Expected: 20-50 Sentinel-2 images showing sedimentation over the Taraia Object
+                                </div>
+                            </div>
+                        )}
+
+                        {/* Metadata Footer */}
+                        <div className="mt-4 text-xs text-slate-500 text-center">
+                            Generated: {new Date(config.metadata.generated).toLocaleString()} | 
+                            Total Images: {config.metadata.total_images}
+                        </div>
+                    </div>
+
+                    <style>{`
+                        .slider::-webkit-slider-thumb {
+                            appearance: none;
+                            width: 18px;
+                            height: 18px;
+                            background: #3b82f6;
+                            cursor: pointer;
+                            border-radius: 50%;
+                            border: 2px solid white;
+                        }
+
+                        .slider::-moz-range-thumb {
+                            width: 18px;
+                            height: 18px;
+                            background: #3b82f6;
+                            cursor: pointer;
+                            border-radius: 50%;
+                            border: 2px solid white;
+                        }
+                    `}</style>
+                </div>
+            );
+        };
+
+        ReactDOM.render(<TaraiaViewer />, document.getElementById('root'));
+    </script>
+</body>
+</html>
